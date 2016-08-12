@@ -1,0 +1,31 @@
+<ion-navbar *navbar>
+    <button menuToggle>
+    <ion-icon name="menu"></ion-icon>
+  </button>
+    <ion-title>用户管理</ion-title>
+    <ion-buttons end>
+      <button (click)="popoverOperations($event)">
+          <ion-icon name="options"></ion-icon>
+      </button>
+    </ion-buttons>
+</ion-navbar>
+
+
+<ion-content padding>
+    <ion-grid>
+        <ion-row class="table-head">
+            <ion-col width-10></ion-col>
+            <ion-col width-20>姓名</ion-col>
+            <ion-col width-50>电话</ion-col>
+            <ion-col width-20>编辑</ion-col>
+        </ion-row>
+        <ion-row *ngFor="let item of items" data-user-id="{{item.id}}"> 
+            <ion-col width-10><ion-icon name="person"></ion-icon></ion-col>
+            <ion-col width-20>{{item.username}}</ion-col>
+            <ion-col width-50><button small><ion-icon name="call"></ion-icon></button>{{item.phoneNum}}</ion-col>
+            <ion-col width-20><button small (click)="showUserPage(item)"><ion-icon name="open"></ion-icon></button></ion-col>
+        </ion-row>
+    </ion-grid>
+
+
+</ion-content>

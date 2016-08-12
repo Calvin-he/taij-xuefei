@@ -1,0 +1,20 @@
+<ion-navbar *navbar>
+  <button menuToggle>
+    <ion-icon name="menu"></ion-icon>
+  </button>
+  <ion-title>缴费记录</ion-title>
+  <ion-buttons end>
+    <button (click)="pushNewPaymentPage()">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-buttons>
+</ion-navbar>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let item of items"  [ngClass]="{active:selectItem && selectItem.id==item.id}">
+      <a class="username" href="#" (click)="showUserPage(item.user)">{{item.user.username}}</a> 于 <span [dateShow]="item.startDate"></span> 交费 <span>{{item.amountOfPaid}}</span>元 
+      <button small (click)="viewPaidRecord(item)" item-right><ion-icon name="open"></ion-icon></button>
+    </ion-item>
+  </ion-list>
+</ion-content>

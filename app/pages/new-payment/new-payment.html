@@ -1,0 +1,39 @@
+<ion-navbar *navbar>
+  <button menuToggle>
+    <ion-icon name="menu"></ion-icon>
+  </button>
+  <ion-title>新增缴费</ion-title>
+</ion-navbar>
+
+
+<ion-content padding>
+  <form [ngFormModel]='form' (submit)="onSubmit()">
+    <ion-list>
+      <ion-item>
+        <ion-label fixed>学生:</ion-label>
+        <ion-select ngControl="userId"  placeholder="点击选择学生" [alertOptions]="{title:'请选择学生'}" style="width:80%">
+          <ion-option *ngFor="let item of userlist" value="{{item.id}}">{{item.username}}</ion-option>
+        </ion-select>
+        <button type="button" (click)="newUserPage()"  item-right><ion-icon name="person-add"></ion-icon></button>
+    
+      </ion-item>
+
+      <ion-item>
+        <ion-label fixed>缴费金额:</ion-label>
+        <ion-input type="number" ngControl='amountOfPaid' clearInput></ion-input>
+      </ion-item>
+        
+      <ion-item class="item-input">
+        <ion-label fixed>缴费日期:</ion-label>
+        <ion-datetime displayFormat="YYYY-MM-DD" ngControl="startDate"></ion-datetime>
+      </ion-item> 
+        
+      <ion-item>
+        <ion-label>学习时长（月）:</ion-label>
+        <ion-input type="number" ngControl='amountOfMonth'></ion-input>
+      </ion-item>       
+    </ion-list>
+    <button type="submit" block [disabled]="!form.valid">提交</button>
+  </form>
+
+</ion-content>

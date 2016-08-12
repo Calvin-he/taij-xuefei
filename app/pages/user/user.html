@@ -1,0 +1,62 @@
+<ion-navbar *navbar>
+    <button menuToggle>
+    <ion-icon name="menu"></ion-icon>
+  	</button>
+    <ion-title>{{user.id?"编辑用户":"新增用户"}}</ion-title>
+    <ion-buttons end>
+        <button (click)="importFromContacts()" [hidden]="user.id">
+            <ion-icon name="contacts"></ion-icon>
+        </button>
+        <button (click)="onRemoveUser()" [hidden]="!user.id">
+            <ion-icon name="trash"></ion-icon>
+        </button>
+    </ion-buttons>
+</ion-navbar>
+
+
+<ion-content padding class="edit-form">
+    <!----------------Create New User-------------------------->
+    <form [ngFormModel]='form' (submit)="onCreateUser()" *ngIf="!user.id">
+        <ion-list>
+            <ion-item>
+                <ion-label fixed>姓名:</ion-label>
+                <ion-input type="text" ngControl='username'></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label fixed>电话:</ion-label>
+                <ion-input type="text" ngControl='phoneNum'></ion-input>
+            </ion-item>
+        </ion-list>
+        <button type="submit" block [disabled]="!form.valid">提交</button>
+        <button type="button" block nav-pop>取消</button>
+    </form>
+    <!----------------Update User-------------------------->
+
+        <ion-list *ngIf="user.id">
+            <ion-list-header>基本信息</ion-list-header>
+            <ion-item>
+                <ion-label fixed>姓名:</ion-label>
+                <ion-input type="text" [ngFormControl]="form.controls['username']"></ion-input>
+                <button item-right [disabled]="!form.controls['username'].dirty" (click)="onUpdateUsername()">更新</button>
+            </ion-item>
+            <ion-item>
+                <ion-label fixed>电话:</ion-label>
+                <ion-input type="text" [ngFormControl]="form.controls['phoneNum']"></ion-input>
+                <button item-right [disabled]="!form.controls['phoneNum'].dirty" (click)="onUpdateUserPhoneNum()">更新</button>
+            </ion-item>
+            <ion-item>
+                <ion-label fixed>创建时间:</ion-label>
+                <ion-label [dateShow]="user.createDate"></ion-label>
+            </ion-item>
+        </ion-list>
+    <ion-list *ngIf="user.id">
+        <ion-list-header>缴费记录<button (click)="pushNewPaymentPage()" small item-right><ion-icon name="add"></ion-icon></button></ion-list-header>
+        <button ion-item *ngFor="let paidRecord of user.paidRecordList" (click)="viewPaidRecord(paidRecord)">
+            <p>缴费：<span>{{paidRecord.amountOfPaid}}</span>元<p>
+            <p>  
+                学习时间：<span [dateShow]="paidRecord.startDate"></span> ~ 
+                <span [dateShow]="paidRecord.endDate"></span>
+            </p>
+        </button>
+    </ion-list>
+</ion-content>

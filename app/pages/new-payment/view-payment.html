@@ -1,0 +1,39 @@
+<ion-navbar *navbar>
+  <button menuToggle>
+    <ion-icon name="menu"></ion-icon>
+  </button>
+  <ion-title>缴费记录</ion-title>
+  <ion-buttons end>
+      <button (click)="onRemovePaidRecord()">
+          <ion-icon name="trash"></ion-icon>
+      </button>
+  </ion-buttons>
+</ion-navbar>
+
+
+<ion-content padding>
+    <ion-list>
+      <ion-item>
+        <ion-label fixed>姓名:</ion-label>
+        <ion-input value="{{paidRecord.user.username}}" readonly></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label fixed>缴费金额:</ion-label>
+        <ion-input value="{{paidRecord.amountOfPaid}} 元" readonly></ion-input>
+      </ion-item>
+        
+      <ion-item>
+        <ion-label fixed>开始日期:</ion-label>
+        <ion-label [dateShow]="paidRecord.startDate"></ion-label>
+      </ion-item> 
+        
+      <ion-item>
+        <ion-label fixed>结束日期:</ion-label>
+        <ion-datetime displayFormat="YYYY-MM-DD" [ngFormControl]="endDateCtrl"></ion-datetime>
+        <button (click)="updateEndDate()" [disabled]="!endDateCtrl.dirty" small item-right>更新</button>
+      </ion-item>       
+    </ion-list>
+
+
+</ion-content>
