@@ -8,14 +8,13 @@ import {User} from '../../business/model';
     template: `
     <ion-list>
       <button ion-item (click)="showUserPage()">新增用户</button>
-      <button ion-item (click)="importFromAddressbook()">从通讯录导入用户</button>
       <button ion-item (click)="deleteUserInBatch()">批量删除</button>
       <button ion-item (click)="close()">关闭</button>
     </ion-list>
   `
 })
 export class UserListOperationPopover {
-    constructor(private viewCtrl: ViewController, private nav: NavController, private events: Events) { }
+    constructor(private viewCtrl: ViewController, private nav: NavController, private userService:UserService, private events: Events) { }
 
     close() {
         this.viewCtrl.dismiss();
@@ -24,8 +23,7 @@ export class UserListOperationPopover {
     showUserPage(user) {
         this.viewCtrl.dismiss().then((data) => {
             this.nav.push(UserPage);
-        })
-
+        });
     }
 
 }
@@ -57,4 +55,5 @@ export class UserSelectionModal {
     selectUser(user){
         this.viewCtrl.dismiss(user);
     }
+
 }

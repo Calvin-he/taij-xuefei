@@ -39,4 +39,5 @@ export class ListPage {
   showUserPage(user){
     this.nav.push(UserPage, {user:user});
   }
+
 }

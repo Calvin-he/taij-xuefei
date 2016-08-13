@@ -3,7 +3,7 @@
     <ion-icon name="menu"></ion-icon>
   </button>
   <ion-title>缴费记录</ion-title>
-  <ion-buttons end>
+  <ion-buttons end margin-right>
       <button (click)="onRemovePaidRecord()">
           <ion-icon name="trash"></ion-icon>
       </button>
@@ -31,7 +31,10 @@
       <ion-item>
         <ion-label fixed>结束日期:</ion-label>
         <ion-datetime displayFormat="YYYY-MM-DD" [ngFormControl]="endDateCtrl"></ion-datetime>
-        <button (click)="updateEndDate()" [disabled]="!endDateCtrl.dirty" small item-right>更新</button>
+        <button (click)="onUpdateEnddate()" [disabled]="endDateCtrl.value===endDateStr" small item-right>更新</button>
+      </ion-item>
+      <ion-item>
+        <span>还剩{{remainingDays}}天</span>
       </ion-item>       
     </ion-list>
 

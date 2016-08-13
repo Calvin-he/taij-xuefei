@@ -6,6 +6,8 @@ import {User, PaidRecord} from '../../business/model';
 import {DateShowDirective} from '../../utils/date-show.directive';
 import {NewPaymentPage} from '../new-payment/new-payment';
 import {ViewPaymentPage} from '../new-payment/view-payment';
+import { Contacts } from 'ionic-native';
+
 
 @Page({
     templateUrl: 'build/pages/user/user.html',
@@ -86,5 +88,18 @@ export class UserPage {
 
     viewPaidRecord(paidRecord){
         this.nav.push(ViewPaymentPage, {item: paidRecord})
+    }
+
+    importFromContacts(){
+        Contacts.pickContact().then((data) => {
+            if(data && data.phoneNumbers.length>0){
+                let phoneNum = data.phoneNumbers[0].value;
+                let user = new User(data.displayName, phoneNum);
+                this.userService.saveUser(user).then((data)=>{
+                    this.events.publish("user:create", user);
+                    this.nav.pop();
+                });
+            }
+        });
     }
 }

@@ -10,7 +10,7 @@ export class UserService {
 
     constructor() {
         this.storage = new Storage(SqlStorage, { name: 'xuefei_v1' });
-        this.storage.query("DROP TABLE IF EXISTS User");
+        //this.storage.query("DROP TABLE IF EXISTS User");
         this.storage.query(`CREATE TABLE IF NOT EXISTS User(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     username TEXT NOT NULL, 
@@ -20,9 +20,9 @@ export class UserService {
                     comment text
                     )`);
 
-        this.storage.query(`INSERT INTO User(username, phoneNum,createDate) VALUES('Alice', '18888888888', '20160731212130')`);
+        //this.storage.query(`INSERT INTO User(username, phoneNum,createDate) VALUES('Alice', '18888888888', '20160731212130')`);
 
-        this.storage.query("DROP TABLE IF EXISTS PaidRecord");
+        //this.storage.query("DROP TABLE IF EXISTS PaidRecord");
         this.storage.query(`CREATE TABLE IF NOT EXISTS PaidRecord(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER NOT NULL,
@@ -96,6 +96,12 @@ export class UserService {
                         record.id = data.res.insertId;
                         return record;
             });
+        }else{
+            let sql = "UPDATE PaidRecord SET user_id=?, amountOfPaid=?, startDate=?, endDate=? WHERE id=?";
+            let startDate:number = this.formatDate(record.startDate), 
+                endDate:number = this.formatDate(record.endDate);
+            return this.storage.query(sql, [record.user.id, record.amountOfPaid, startDate, endDate, record.id]);
+
         }
 
     }

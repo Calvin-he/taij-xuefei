@@ -11,7 +11,7 @@
     <ion-list>
       <ion-item>
         <ion-label fixed>学生:</ion-label>
-        <ion-select ngControl="userId"  placeholder="点击选择学生" [alertOptions]="{title:'请选择学生'}" style="width:80%">
+        <ion-select ngControl="userId"  placeholder="点击选择学生" [alertOptions]="{title:'请选择学生'}" style="width:60%">
           <ion-option *ngFor="let item of userlist" value="{{item.id}}">{{item.username}}</ion-option>
         </ion-select>
         <button type="button" (click)="newUserPage()"  item-right><ion-icon name="person-add"></ion-icon></button>

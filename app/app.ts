@@ -3,8 +3,9 @@ import {ionicBootstrap, Platform, MenuController, Nav} from 'ionic-angular';
 import {StatusBar} from 'ionic-native';
 import {NewPaymentPage} from './pages/new-payment/new-payment';
 import {ListPage} from './pages/list/list';
-import {UserListPage} from './pages/userlist/userlist'
-import {UserService} from './business/service'
+import {UserListPage} from './pages/userlist/userlist';
+import {UserService} from './business/service';
+import {SettingsPage} from './pages/settings/settings';
 
 @Component({
   templateUrl: 'build/app.html',
@@ -27,7 +28,7 @@ class MyApp {
     this.pages = [
       { title: '缴费管理', component: ListPage },
       {title: "用户管理", component: UserListPage},
-      // { title: '新增缴费', component:NewPaymentPage },
+      { title: '设置', component:SettingsPage },
     ];
     //this.nav.push(NewPaymentPage);
   }
