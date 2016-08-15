@@ -71,13 +71,19 @@ export class UserService {
         }
     }
 
-    listAllUser(){
+    listAllUser(checkExpired:Boolean=true){
         let sql:string = "SELECT id, username, phoneNum, createDate FROM User ORDER BY createDate DESC";
         return this.storage.query(sql).then((data) => {
             let users:Array<User> = [];
             for(let item of data.res.rows){
                 let user = new User(item.username, item.phoneNum, item.id);
                 user.createDate = this.parseDateTime(item.createDate);
+                let now = this.formatDate(new Date());
+                if(checkExpired){
+                    this.storage.query("SELECT id FROM PaidRecord WHERE user_id=? AND endDate>?", [user.id, now]).then((data) => {
+                        user.isExpired = (data.res.rows.length == 0);
+                    })
+                }
                 users.push(user);
             }
             return users;
@@ -114,6 +120,7 @@ export class UserService {
             for(let item of data.res.rows){
                 let user = new User(item.username, item.phoneNum, item.user_id);
                 user.createDate = this.parseDateTime(item.createDate);
+                user.isExpired = false;
                 let startDate = this.parseDate(item.startDate);
                 let endDate = this.parseDate(item.endDate);
                 let paidRecord = new PaidRecord(user, item.amountOfPaid, startDate, endDate, item.pid);

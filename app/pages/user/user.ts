@@ -1,4 +1,4 @@
-import {Page, NavController, NavParams, Events} from 'ionic-angular';
+import {Page, NavController, NavParams, Events, Alert} from 'ionic-angular';
 import { FormBuilder, ControlGroup, Validators } from '@angular/common';
 
 import {UserService} from '../../business/service';
@@ -32,7 +32,7 @@ export class UserPage {
         });
     }
 
-    ionViewWillEnter(){
+    ionViewWillEnter() {
         this.userService.getPaidRecordsOfUser(this.user).then((paidRecords) => {
             this.user.paidRecordList = paidRecords;
         });
@@ -54,11 +54,10 @@ export class UserPage {
 
     onUpdateUsername() {
         let usernameCtrl = this.form.controls['username'];
-        if(usernameCtrl.valid){
+        if (usernameCtrl.valid) {
             this.user.username = usernameCtrl.value;
-            this.userService.saveUser(this.user).then((user)=>{
+            this.userService.saveUser(this.user).then((user) => {
                 this.events.publish("user:update", user);
-                usernameCtrl.pristine = true;
             })
         }
         return true;
@@ -66,36 +65,71 @@ export class UserPage {
 
     onUpdateUserPhoneNum() {
         let phoneNumCtrl = this.form.controls['phoneNum'];
-        if(phoneNumCtrl.valid){
+        if (phoneNumCtrl.valid) {
             this.user.phoneNum = phoneNumCtrl.value;
-            this.userService.saveUser(this.user).then((user)=>{
+            this.userService.saveUser(this.user).then((user) => {
                 this.events.publish("user:update", user);
             })
         }
         return true;
     }
 
-    onRemoveUser(){
-        this.userService.deleteUser(this.user.id).then((data)=>{
-            this.events.publish("user:delete", this.user);
-            this.nav.pop();
-        });
+    onRemoveUser() {
+        let user = this.user;
+        let alert: Alert = null;
+
+        if (!user.isExpired) {
+            alert = Alert.create({
+                title: "提示",
+                message: "用户'" + user.username + "'尚在有效学习期内, 您不能删除!",
+                buttons: ['关闭']
+            });
+
+        } else {
+            alert = Alert.create({
+                title: "提示",
+                message: "删除用户将删除该用户所有的缴费记录，确实要删除用户'" + user.username + "'吗?",
+                buttons: [
+                    {
+                        text: "取消",
+                        role: "cancel"
+                    },
+                    {
+                        text: "确认",
+                        handler: () => {
+                            if (user.isExpired) {
+                                let navTransition = alert.dismiss();
+                                this.userService.deleteUser(user.id).then((user) => {
+                                    this.events.publish("user:remove", user);
+                                    navTransition.then(() => {
+                                        this.nav.pop();
+                                    });
+                                });
+                                return false;
+                            }
+
+                        }
+                    }
+                ]
+            });
+        }
+        this.nav.present(alert);
     }
 
     pushNewPaymentPage() {
-        this.nav.push(NewPaymentPage, {user:this.user});
+        this.nav.push(NewPaymentPage, { user: this.user });
     }
 
-    viewPaidRecord(paidRecord){
-        this.nav.push(ViewPaymentPage, {item: paidRecord})
+    viewPaidRecord(paidRecord) {
+        this.nav.push(ViewPaymentPage, { item: paidRecord })
     }
 
-    importFromContacts(){
+    importFromContacts() {
         Contacts.pickContact().then((data) => {
-            if(data && data.phoneNumbers.length>0){
+            if (data && data.phoneNumbers.length > 0) {
                 let phoneNum = data.phoneNumbers[0].value;
                 let user = new User(data.displayName, phoneNum);
-                this.userService.saveUser(user).then((data)=>{
+                this.userService.saveUser(user).then((data) => {
                     this.events.publish("user:create", user);
                     this.nav.pop();
                 });

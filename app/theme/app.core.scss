@@ -7,10 +7,47 @@
 // By default each design mode includes these shared imports.
 // App Shared Sass variables belong in app.variables.scss.
 
-@import "../pages/new-payment/new-payment";
+//@import "../pages/new-payment/new-payment";
 
-@import "../pages/item-details/item-details";
+//@import "../pages/item-details/item-details";
 
-ion-buttons > button {
-    padding-right: 10px;
+
+.table-head, .table-row {
+    border-bottom: 1px solid lighten(#000, 80%);
+    padding-bottom: 6px;
+    padding-top:  6px;
+}
+
+.table-head {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.table-row {
+    font-size: 1.8rem;
+}
+
+.status-user-expired,
+.status-user-unexpired {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: white;
+    min-width: 6.5rem;
+    text-align: center;
+    border: 1px outset lighten(#000, 80%);
+    border-radius: 8px;
+    padding:5px;
+}
+.status-user-expired {
+    background-color: red;
+}
+.status-user-unexpired {
+    background-color: green;
+}
+
+.clickable-username {
+    padding: 0 5px;
+    color: map-get($colors,primary);
+    cursor: pointer;
+    min-width: 4rem;
 }

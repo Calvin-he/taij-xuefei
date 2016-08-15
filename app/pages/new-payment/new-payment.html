@@ -10,8 +10,8 @@
   <form [ngFormModel]='form' (submit)="onSubmit()">
     <ion-list>
       <ion-item>
-        <ion-label fixed>学生:</ion-label>
-        <ion-select ngControl="userId"  placeholder="点击选择学生" [alertOptions]="{title:'请选择学生'}" style="width:60%">
+        <ion-label fixed>学　　生:</ion-label>
+        <ion-select ngControl="userId"  placeholder="点击选择学生" [alertOptions]="{title:'请选择学生'}" style="width:100%">
           <ion-option *ngFor="let item of userlist" value="{{item.id}}">{{item.username}}</ion-option>
         </ion-select>
         <button type="button" (click)="newUserPage()"  item-right><ion-icon name="person-add"></ion-icon></button>
@@ -19,21 +19,23 @@
       </ion-item>
 
       <ion-item>
-        <ion-label fixed>缴费金额:</ion-label>
+        <ion-label>缴费金额:</ion-label>
         <ion-input type="number" ngControl='amountOfPaid' clearInput></ion-input>
       </ion-item>
         
       <ion-item class="item-input">
-        <ion-label fixed>缴费日期:</ion-label>
+        <ion-label>缴费日期:</ion-label>
         <ion-datetime displayFormat="YYYY-MM-DD" ngControl="startDate"></ion-datetime>
       </ion-item> 
         
       <ion-item>
-        <ion-label>学习时长（月）:</ion-label>
+        <ion-label>学习时长:</ion-label>
         <ion-input type="number" ngControl='amountOfMonth'></ion-input>
+        <span item-right>个月</span>
       </ion-item>       
     </ion-list>
     <button type="submit" block [disabled]="!form.valid">提交</button>
+    <button type="submit" block nav-pop danger>取消</button>
   </form>
 
 </ion-content>

@@ -4,7 +4,7 @@
   </button>
     <ion-title>用户管理</ion-title>
     <ion-buttons end margin-right>
-        <button (click)="showUserPage()">
+        <button (click)="showUserPage($event)">
             <ion-icon name="person-add"></ion-icon>
         </button>
         <button (click)="batchImportFromContracts()">
@@ -17,19 +17,16 @@
 <ion-content padding>
     <ion-grid>
         <ion-row class="table-head">
-            <ion-col width-10></ion-col>
-            <ion-col width-25>姓名</ion-col>
+            <ion-col width-35>姓名</ion-col>
             <ion-col width-45>电话</ion-col>
-            <ion-col width-20>操作</ion-col>
+            <ion-col width-20>状态</ion-col>
         </ion-row>
-        <ion-row *ngFor="let item of items" data-user-id="{{item.id}}">
-            <ion-col width-10>
-                <ion-icon name="person"></ion-icon>
-            </ion-col>
-            <ion-col width-25>{{item.username}}</ion-col>
-            <ion-col width-45><a href='tel: {{item.phoneNum}}'>{{item.phoneNum}}</a></ion-col>
+        <ion-row *ngFor="let item of items" data-user-id="{{item.id}}" (click)="popoverUserOperations(item)" class="table-row">
+            <ion-col width-35 (click)="showUserPage($event, item)"><a class="clickable-username">{{item.username}}</a></ion-col>
+            <ion-col width-45>{{item.phoneNum}}</ion-col>
             <ion-col width-20>
-                <ion-icon name="options" (click)="popoverUserOperations(item)"></ion-icon>
+               <div *ngIf="item.isExpired" class="status-user-expired">已过期</div>
+               <div *ngIf="!item.isExpired" class="status-user-unexpired">有效</div>
             </ion-col>
         </ion-row>
     </ion-grid>

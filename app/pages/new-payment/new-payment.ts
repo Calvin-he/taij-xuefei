@@ -36,7 +36,7 @@ export class NewPaymentPage {
    * callback method
    */
   ionViewWillEnter(){
-    this.userService.listAllUser().then((userlist) => {
+    this.userService.listAllUser(false).then((userlist) => {
       this.userlist = userlist;
     });
   }

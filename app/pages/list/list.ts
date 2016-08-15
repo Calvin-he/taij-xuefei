@@ -1,6 +1,6 @@
 import {Page, NavController, NavParams, Events} from 'ionic-angular';
 import {ViewPaymentPage} from '../new-payment/view-payment';
-import {PaidRecord} from '../../business/model';
+import {PaidRecord, User} from '../../business/model';
 import {UserService} from '../../business/service';
 import {DateShowDirective} from '../../utils/date-show.directive';
 import {NewPaymentPage} from '../new-payment/new-payment';
@@ -36,7 +36,8 @@ export class ListPage {
     this.nav.push(NewPaymentPage);
   }
 
-  showUserPage(user){
+  showUserPage($event,user:User){
+    $event.stopPropagation();
     this.nav.push(UserPage, {user:user});
   }
 

@@ -22,7 +22,8 @@ export class UserListPage {
     }
 
 
-    showUserPage(user?: User) {
+    showUserPage($event, user?: User) {
+        $event.stopPropagation();
         this.nav.push(UserPage, { user: user });
     }
 
@@ -43,15 +44,21 @@ export class UserListPage {
         let actionSheet = ActionSheet.create({
             buttons: [
                 {
-                    text: "查看",
+                    text: "查看用户信息",
                     handler: () => {
-                        this.nav.push(UserPage, { user: user });
+                        actionSheet.dismiss().then(()=>{
+                             this.nav.push(UserPage, { user: user });
+                        });
+                        return false;
                     }
                 },
                 {
-                    text: "付学费",
+                    text: "交学费",
                     handler: () => {
-                        this.nav.push(NewPaymentPage, { user: user });
+                        actionSheet.dismiss().then(()=>{
+                            this.nav.push(NewPaymentPage, { user: user });
+                        });
+                        return false;
                     }
                 },
                 {
@@ -61,12 +68,50 @@ export class UserListPage {
                     }
                 },
                 {
-                    text: "删除",
-                    role: "destructive",
+                    text: "电话呼叫",
                     handler: () => {
-
+                        window.location.href = "tel: " + user.phoneNum
                     }
                 },
+                {
+                    text: "删除用户",
+                    role: "destructive",
+                    handler: () => {
+                        let alert: Alert;
+
+                        if (!user.isExpired) {
+                            alert = Alert.create({
+                                title: "提示",
+                                message: "用户'" + user.username + "'尚在有效学习期内, 您不能删除!",
+                                buttons: ['关闭']
+                            });
+                        } else {
+                            alert = Alert.create({
+                                title: "提示",
+                                message: "删除用户将删除该用户所有的缴费记录，确实要删除用户'" + user.username + "'吗?",
+                                buttons: [
+                                    {
+                                        text: "取消",
+                                        role: "cancel"
+                                    },
+                                    {
+                                        text: "确认",
+                                        handler: () => {
+                                            if (user.isExpired) {
+                                                this.userService.deleteUser(user.id).then((user) => {
+                                                    this.events.publish("user:remove", user);
+                                                    this.listUsers();
+                                                });
+                                            }
+
+                                        }
+                                    }
+                                ]
+                            });
+                        }
+                        this.nav.present(alert);
+                    }
+                }
             ]
         });
         this.nav.present(actionSheet);
@@ -99,12 +144,12 @@ export class UserListPage {
                 }, {
                     text: "确认",
                     handler: (data) => {
-                        for(let idx of data){
-                            let c =  results[idx];
+                        for (let idx of data) {
+                            let c = results[idx];
                             let user = new User(c.displayName, c.phoneNumbers[0].value);
                             this.userService.saveUser(user);
                         }
-
+                        this.listUsers();
                     }
                 }
             ];

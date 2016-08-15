@@ -1,4 +1,4 @@
-import {Page, NavController, NavParams, Events, Modal} from 'ionic-angular';
+import {Page, NavController, NavParams, Events, Modal, Alert} from 'ionic-angular';
 import { FormBuilder, ControlGroup, Validators, Control } from '@angular/common';
 import * as moment from 'moment';
 import {UserService} from '../../business/service';
@@ -20,10 +20,31 @@ export class ViewPaymentPage {
   }
 
   onRemovePaidRecord() {
-    this.userService.deletePaidRecord(this.paidRecord.id).then((data) => {
-      this.events.publish('paidrecord:delete', this.paidRecord);
-      this.nav.pop();
-    })
+    let msg = (!this.paidRecord.isExpired())?"此次缴费尚未过期，确认要删除吗？":"确认要删除吗?";
+    let alert = Alert.create({
+      title: "删除提示",
+      message: msg,
+      buttons:[
+        {
+          text: "取消",
+          role: "cancel"
+        },
+        {
+          text: "确认",
+          handler: ()=>{
+           let navTransition = alert.dismiss();
+           this.userService.deletePaidRecord(this.paidRecord.id).then((data) => {
+              this.events.publish('paidrecord:delete', this.paidRecord);
+              navTransition.then(()=>{
+                this.nav.pop();
+              });
+          });
+          }
+        }
+      ]
+    });
+    this.nav.present(alert);
+    
   }
 
   onUpdateEnddate() {

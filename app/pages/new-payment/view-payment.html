@@ -14,13 +14,13 @@
 <ion-content padding>
     <ion-list>
       <ion-item>
-        <ion-label fixed>姓名:</ion-label>
-        <ion-input value="{{paidRecord.user.username}}" readonly></ion-input>
+        <ion-label fixed>姓　　名:</ion-label>
+        <ion-label>{{paidRecord.user.username}}</ion-label>
       </ion-item>
 
       <ion-item>
         <ion-label fixed>缴费金额:</ion-label>
-        <ion-input value="{{paidRecord.amountOfPaid}} 元" readonly></ion-input>
+        <ion-label>￥{{paidRecord.amountOfPaid}}</ion-label>
       </ion-item>
         
       <ion-item>
@@ -30,11 +30,12 @@
         
       <ion-item>
         <ion-label fixed>结束日期:</ion-label>
-        <ion-datetime displayFormat="YYYY-MM-DD" [ngFormControl]="endDateCtrl"></ion-datetime>
-        <button (click)="onUpdateEnddate()" [disabled]="endDateCtrl.value===endDateStr" small item-right>更新</button>
+        <!--ion-label [dateShow]="paidRecord.endDate"></ion-label-->
+        <ion-datetime displayFormat="YYYY-MM-DD" [ngFormControl]="endDateCtrl" style="font-size:1.6rem; padding-left: 0"></ion-datetime>
+        <button (click)="onUpdateEnddate()" [disabled]="endDateCtrl.value===endDateStr" small item-right>修改</button>
       </ion-item>
-      <ion-item>
-        <span>还剩{{remainingDays}}天</span>
+      <ion-item  *ngIf="remainingDays<=0">
+        <div item-right class="status-user-expired" style="font-size: 1.8rem;">已过期{{-remainingDays}}天</div>
       </ion-item>       
     </ion-list>
 

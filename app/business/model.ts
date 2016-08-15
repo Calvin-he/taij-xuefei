@@ -4,17 +4,13 @@ import * as moment from 'moment';
 export class User {
     public paidRecordList:Array<PaidRecord>;
     public createDate:Date;
+    public isExpired;
 
     constructor(public username:String, public phoneNum:String, public id?:number){
         if(!id){
             this.createDate = new Date();
         }
     }
-
-    getLatestPaidRecord(){
-
-    }
-
 }
 
 export class PaidRecord {
@@ -25,7 +21,7 @@ export class PaidRecord {
     }
      
     isExpired():Boolean{
-        return false;
+        return this.endDate < new Date();
     }
 
 

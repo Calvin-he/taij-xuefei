@@ -19,40 +19,43 @@
     <form [ngFormModel]='form' (submit)="onCreateUser()" *ngIf="!user.id">
         <ion-list>
             <ion-item>
-                <ion-label fixed>姓名:</ion-label>
+                <ion-label>姓名:</ion-label>
                 <ion-input type="text" ngControl='username'></ion-input>
             </ion-item>
             <ion-item>
-                <ion-label fixed>电话:</ion-label>
-                <ion-input type="text" ngControl='phoneNum'></ion-input>
+                <ion-label>电话:</ion-label>
+                <ion-input type="tel" ngControl='phoneNum'></ion-input>
             </ion-item>
         </ion-list>
         <button type="submit" block [disabled]="!form.valid">提交</button>
-        <button type="button" block nav-pop>取消</button>
+        <button type="button" block nav-pop danger>取消</button>
     </form>
     <!----------------Update User-------------------------->
 
     <ion-list *ngIf="user.id">
         <ion-list-header>基本信息</ion-list-header>
         <ion-item>
-            <ion-label fixed>姓名:</ion-label>
-            <ion-input type="text" [ngFormControl]="form.controls['username']"></ion-input>
-            <button item-right [disabled]="form.controls['username'].value===user.username" (click)="onUpdateUsername()">更新</button>
+            <ion-label>姓　　名:</ion-label>
+            <ion-input type="text" [ngFormControl]="form.controls['username']" style="padding-left:0"></ion-input>
+            <button item-right [disabled]="form.controls['username'].value===user.username" (click)="onUpdateUsername()">修改</button>
         </ion-item>
         <ion-item>
-            <ion-label fixed>电话:</ion-label>
-            <ion-input type="text" [ngFormControl]="form.controls['phoneNum']"></ion-input>
-            <button item-right [disabled]="form.controls['phoneNum'].value===user.phoneNum" (click)="onUpdateUserPhoneNum()">更新</button>
+            <ion-label>电　　话:</ion-label>
+            <ion-input type="text" [ngFormControl]="form.controls['phoneNum']" style="padding-left:0"></ion-input>
+            <button item-right [disabled]="form.controls['phoneNum'].value===user.phoneNum" (click)="onUpdateUserPhoneNum()">修改</button>
         </ion-item>
         <ion-item>
-            <ion-label fixed>创建时间:</ion-label>
+            <ion-label>创建时间:</ion-label>
             <ion-label [dateShow]="user.createDate"></ion-label>
         </ion-item>
     </ion-list>
     <ion-list *ngIf="user.id">
-        <ion-list-header>缴费记录<button (click)="pushNewPaymentPage()" small item-right><ion-icon name="add"></ion-icon></button></ion-list-header>
+        <ion-list-header>缴费记录<button (click)="pushNewPaymentPage()" round small><ion-icon name="add"></ion-icon></button></ion-list-header>
         <button ion-item *ngFor="let paidRecord of user.paidRecordList" (click)="viewPaidRecord(paidRecord)">
-            <p>缴费：<span>{{paidRecord.amountOfPaid}}</span>元<p>
+            <p>缴费：<span>￥{{paidRecord.amountOfPaid}}</span> 
+                <span class="status-user-expired" *ngIf="paidRecord.isExpired()" style="float:right">已过期</span>
+                <span class="status-user-unexpired" *ngIf="!paidRecord.isExpired()" style="float:right">有效</span>
+            <p>
             <p>  
                 学习时间：<span [dateShow]="paidRecord.startDate"></span> ~ 
                 <span [dateShow]="paidRecord.endDate"></span>
