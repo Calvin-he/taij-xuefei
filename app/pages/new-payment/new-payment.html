@@ -15,7 +15,6 @@
           <ion-option *ngFor="let item of userlist" value="{{item.id}}">{{item.username}}</ion-option>
         </ion-select>
         <button type="button" (click)="newUserPage()"  item-right><ion-icon name="person-add"></ion-icon></button>
-    
       </ion-item>
 
       <ion-item>
@@ -35,7 +34,7 @@
       </ion-item>       
     </ion-list>
     <button type="submit" block [disabled]="!form.valid">提交</button>
-    <button type="submit" block nav-pop danger>取消</button>
+    <button type="button" block nav-pop danger>取消</button>
   </form>
 
 </ion-content>

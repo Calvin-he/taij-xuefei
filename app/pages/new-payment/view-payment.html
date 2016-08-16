@@ -34,8 +34,8 @@
         <ion-datetime displayFormat="YYYY-MM-DD" [ngFormControl]="endDateCtrl" style="font-size:1.6rem; padding-left: 0"></ion-datetime>
         <button (click)="onUpdateEnddate()" [disabled]="endDateCtrl.value===endDateStr" small item-right>修改</button>
       </ion-item>
-      <ion-item  *ngIf="remainingDays<=0">
-        <div item-right class="status-user-expired" style="font-size: 1.8rem;">已过期{{-remainingDays}}天</div>
+      <ion-item  *ngIf="paidRecord.remainingDays<=0">
+        <div item-right class="status-user-expired" style="font-size: 1.6rem;">已过期{{-paidRecord.remainingDays}}天</div>
       </ion-item>       
     </ion-list>
 

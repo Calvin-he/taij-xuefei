@@ -24,5 +24,10 @@ export class PaidRecord {
         return this.endDate < new Date();
     }
 
+    get remainingDays():Number {
+        let mdate = moment(this.endDate).startOf('date'),
+        now = moment().startOf('date');
+        return (mdate.unix() - now.unix()) / (24 * 3600);
+    }
 
 }

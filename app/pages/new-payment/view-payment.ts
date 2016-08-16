@@ -2,6 +2,7 @@ import {Page, NavController, NavParams, Events, Modal, Alert} from 'ionic-angula
 import { FormBuilder, ControlGroup, Validators, Control } from '@angular/common';
 import * as moment from 'moment';
 import {UserService} from '../../business/service';
+import {NotificationService} from '../../business/notification';
 import {PaidRecord} from '../../business/model';
 import {DateShowDirective} from '../../utils/date-show.directive';
 
@@ -37,6 +38,7 @@ export class ViewPaymentPage {
               this.events.publish('paidrecord:delete', this.paidRecord);
               navTransition.then(()=>{
                 this.nav.pop();
+                NotificationService.cancelExpiredNotification(this.paidRecord);
               });
           });
           }
@@ -55,6 +57,7 @@ export class ViewPaymentPage {
         this.paidRecord.endDate = ed;
         this.userService.savePaidRecord(this.paidRecord).then((data) => {
           this.events.publish("paidrecord:update", this.paidRecord);
+          NotificationService.updateExpiredNotification(this.paidRecord);
         });
       }
     }
@@ -62,12 +65,5 @@ export class ViewPaymentPage {
 
   get endDateStr() {
     return moment(this.paidRecord.endDate).format('YYYY-MM-DD');
-  }
-
-  get remainingDays() {
-    let mdate = moment(this.paidRecord.endDate).startOf('date'),
-      now = moment().startOf('date');
-    let diffDays = (mdate.unix() - now.unix()) / (24 * 3600);
-    return diffDays;
   }
 }
