@@ -1,5 +1,5 @@
-import {Page, NavController, NavParams, Events, Alert} from 'ionic-angular';
-import { FormBuilder, ControlGroup, Validators } from '@angular/common';
+import {Page, NavController, NavParams, Events, Alert, Toast} from 'ionic-angular';
+import { FormBuilder, ControlGroup, Validators, Control } from '@angular/common';
 
 import {UserService} from '../../business/service';
 import {User, PaidRecord} from '../../business/model';
@@ -40,38 +40,86 @@ export class UserPage {
 
     onCreateUser() {
         if (!this.form.valid) {
-            console.log('invalid form values');
+            console.log('invalid form values:', this.form.value);
             return false;
         }
         let values = this.form.value;
-        let user: User = new User(values.username, values.phoneNum);
-        this.userService.saveUser(user).then((user) => {
-            this.nav.pop().then((data) => {
-                this.events.publish("user:create", user);
+        this.userService.getUserByName(values.username).then((data)=>{
+             if(data != null){
+                let msg = `创建用户失败：姓名${values.username}已经存在，不能重复！`;
+                let toast = Toast.create({
+                    message: msg,
+                    duration: 2000
+                });
+                this.nav.present(toast);
+                return Promise.reject(new Error(msg));
+            }
+        }).then(()=>{
+            this.userService.getUserByPhoneNum(values.phoneNum).then((data)=>{
+                if(data != null){
+                    let msg = `创建用户失败：号码${values.phoneNum}已经存在，不能重复！`;
+                    let toast = Toast.create({
+                        message: msg,
+                        duration: 2000
+                    });
+                    this.nav.present(toast);
+                    return Promise.reject(new Error(msg));
+                }
+            });
+        }).then(()=>{
+            let user: User = new User(values.username, values.phoneNum);
+            this.userService.saveUser(user).then((user) => {
+                this.nav.pop().then((data) => {
+                    this.events.publish("user:create", user);
+                });
             });
         });
     }
 
     onUpdateUsername() {
-        let usernameCtrl = this.form.controls['username'];
+        let usernameCtrl = <Control>this.form.controls['username'];
         if (usernameCtrl.valid) {
-            this.user.username = usernameCtrl.value;
-            this.userService.saveUser(this.user).then((user) => {
-                this.events.publish("user:update", user);
-            })
+            this.userService.getUserByName(usernameCtrl.value).then((data)=>{
+                if(data != null){
+                    let msg = `更新失败：姓名${usernameCtrl.value}已经存在，不能重复！`;
+                    let toast = Toast.create({
+                        message: msg,
+                        duration: 2000
+                    });
+                    usernameCtrl.updateValue(this.user.username);
+                    this.nav.present(toast);
+                    return Promise.reject(new Error(msg));
+                }
+            }).then(()=>{
+                this.user.username = usernameCtrl.value;
+                this.userService.saveUser(this.user).then((user) => {
+                    this.events.publish("user:update", user);
+                });
+            });
         }
-        return true;
     }
 
     onUpdateUserPhoneNum() {
-        let phoneNumCtrl = this.form.controls['phoneNum'];
+        let phoneNumCtrl = <Control>this.form.controls['phoneNum'];
         if (phoneNumCtrl.valid) {
-            this.user.phoneNum = phoneNumCtrl.value;
-            this.userService.saveUser(this.user).then((user) => {
-                this.events.publish("user:update", user);
-            })
+            this.userService.getUserByPhoneNum(phoneNumCtrl.value).then((data)=>{
+                if(data != null){
+                    let msg = `更新失败：号码${phoneNumCtrl.value}已经存在，不能重复！`;
+                    let toast = Toast.create({
+                        message: msg,
+                        duration: 2000
+                    });
+                    phoneNumCtrl.updateValue(this.user.phoneNum);
+                    this.nav.present(toast);
+                    return Promise.reject(new Error(msg));
+                }
+            }).then(()=>{
+                this.user.phoneNum = phoneNumCtrl.value;
+                this.userService.saveUser(this.user).then((user) => {
+                    this.events.publish("user:update", user);
+                });
+            });
         }
-        return true;
     }
 
     onRemoveUser() {
@@ -128,11 +176,35 @@ export class UserPage {
         Contacts.pickContact().then((data) => {
             if (data && data.phoneNumbers.length > 0) {
                 let phoneNum = data.phoneNumbers[0].value;
-                let user = new User(data.displayName, phoneNum);
-                this.userService.saveUser(user).then((data) => {
-                    this.events.publish("user:create", user);
-                    this.nav.pop();
-                });
+                let userCtrl = <Control>this.form.controls['username'];
+                userCtrl.updateValue(data.displayName);
+                let phoneCtrl = <Control>this.form.controls['phoneNum'];
+                phoneCtrl.updateValue(phoneNum);
+                // let user = new User(data.displayName, phoneNum);
+                // this.userService.saveUser(user).then((data) => {
+                //     this.events.publish("user:create", user);
+                //     this.nav.pop();
+                // });
+            }
+        });
+    }
+
+    validateUsernameUnique(c:Control){
+        return this.userService.getUserByName(c.value).then((data)=>{
+            if(data!=null){
+                return {duplicatedUsername: true};
+            }else{
+                return null;
+            }
+        })
+    }
+
+    validatePhoneNumUnique(c:Control){
+        return this.userService.getUserByPhoneNum(c.value).then((data)=>{
+            if(data!=null){
+                return {duplicatedPhoneNum: true};
+            }else{
+                return null;
             }
         });
     }

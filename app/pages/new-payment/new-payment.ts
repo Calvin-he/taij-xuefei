@@ -3,7 +3,6 @@ import { FormBuilder, ControlGroup, Validators, Control } from '@angular/common'
 import * as moment from 'moment';
 
 import {UserService} from '../../business/service';
-import {NotificationService} from '../../business/notification';
 import {User, PaidRecord} from '../../business/model';
 import {ListPage} from '../list/list';
 import {UserPage} from '../user/user';
@@ -71,7 +70,6 @@ export class NewPaymentPage {
     this.userService.savePaidRecord(pc).then((record) => {
       this.nav.pop().then((data) => {
         this.events.publish('paidrecord:create', record);
-        NotificationService.updateExpiredNotification(record);
       });
     });
   }

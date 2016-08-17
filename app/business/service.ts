@@ -13,7 +13,7 @@ export class UserService {
         //this.storage.query("DROP TABLE IF EXISTS User");
         this.storage.query(`CREATE TABLE IF NOT EXISTS User(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    username TEXT NOT NULL, 
+                    username TEXT UNIQUE NOT NULL, 
                     phoneNum TEXT UNIQUE NOT NULL,
                     createDate TEXT NOT NULL,
                     image Blob,
@@ -32,10 +32,6 @@ export class UserService {
                     )`);
     }
 
-    getUser(id: number) {
-
-    }
-
     getUserByPhoneNum(phoneNum: String) {
         let sql = "SELECT id, username, phoneNum, createDate FROM User where phoneNum=?";
         return this.storage.query(sql, [phoneNum]).then((data) => {
@@ -45,8 +41,22 @@ export class UserService {
                 let res = data.res.rows[0];
                 user = new User(res.username, res.phoneNum, res.id);
                 user.createDate = this.parseDateTime(res.createDate);
-            } else if (len == 0) {
-                user = null;
+            } else {
+                user == null;
+            }
+            return user;
+        });
+    }
+
+    getUserByName(username: String) {
+        let sql = "SELECT id, username, phoneNum, createDate FROM User where username=?";
+        return this.storage.query(sql, [username]).then((data) => {
+            let len = data.res.rows.length;
+            let user: User;
+            if (len == 1) {
+                let res = data.res.rows[0];
+                user = new User(res.username, res.phoneNum, res.id);
+                user.createDate = this.parseDateTime(res.createDate);
             } else {
                 user == null;
             }

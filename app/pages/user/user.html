@@ -27,8 +27,9 @@
                 <ion-input type="tel" ngControl='phoneNum'></ion-input>
             </ion-item>
         </ion-list>
-        <button type="submit" block [disabled]="!form.valid">提交</button>
-        <button type="button" block nav-pop danger>取消</button>
+
+        <button type="button" large nav-pop danger style="width:45%; float:left">取消</button>
+        <button type="submit" large [disabled]="!form.valid" style="width:45%; float: right">提交</button>
     </form>
     <!----------------Update User-------------------------->
 

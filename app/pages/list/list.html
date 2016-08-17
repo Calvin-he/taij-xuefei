@@ -12,8 +12,8 @@
 
 <ion-content>
   <ion-list>
-    <ion-item *ngFor="let item of items" [ngClass]="{active:selectItem && selectItem.id==item.id}" (click)="viewPaidRecord(item)">
-      <span class="clickable-username" (click)="showUserPage($event, item.user)">{{item.user.username}}</span> 于 
+    <ion-item class="clickable" *ngFor="let item of items" [ngClass]="{active:selectItem && selectItem.id==item.id}" (click)="viewPaidRecord(item)">
+      <span class="clickable username" (click)="showUserPage($event, item.user)">{{item.user.username}}</span> 于 
       <span [dateShow]="item.startDate"></span> 交费 <span>￥{{item.amountOfPaid}}</span>
     </ion-item>
   </ion-list>
