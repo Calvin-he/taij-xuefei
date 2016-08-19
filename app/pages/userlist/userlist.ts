@@ -147,7 +147,9 @@ export class UserListPage {
                         for (let idx of data) {
                             let c = results[idx];
                             let user = new User(c.displayName, c.phoneNumbers[0].value);
-                            this.userService.saveUser(user);
+                            this.userService.saveUser(user).catch((err)=>{
+                                console.log(`从通讯录导入用户失败：用户${user.username}已存在！`);
+                            });
                         }
                         this.listUsers();
                     }

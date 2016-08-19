@@ -33,7 +33,13 @@ export class UserPage {
     }
 
     ionViewWillEnter() {
-        this.userService.getPaidRecordsOfUser(this.user);
+        this.userService.getPaidRecordsOfUser(this.user).then((paidRecords)=>{
+            if(paidRecords.length>0){
+                this.user.isExpired = paidRecords[0].isExpired();
+            }else{
+                this.user.isExpired = true;
+            }
+        })
     }
 
     onCreateUser() {

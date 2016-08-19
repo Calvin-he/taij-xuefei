@@ -1,5 +1,5 @@
-import {Page, NavController, NavParams, Events, Modal} from 'ionic-angular';
-import { FormBuilder, ControlGroup, Validators, Control } from '@angular/common';
+import {Page, NavController, NavParams, Events, Modal, Toast} from 'ionic-angular';
+import { FormBuilder, ControlGroup, Validators, Control} from '@angular/common';
 import * as moment from 'moment';
 
 import {UserService} from '../../business/service';
@@ -71,6 +71,9 @@ export class NewPaymentPage {
       this.nav.pop().then((data) => {
         this.events.publish('paidrecord:create', record);
       });
+    }, (err)=>{
+      let datestr = moment(startDate).format('MM月DD日');
+      this.nav.present(Toast.create({message: `创建失败：${user.username}在${datestr}已经创建过一条缴费记录。`, duration: 1500}));
     });
   }
 }

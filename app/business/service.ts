@@ -29,7 +29,10 @@ export class UserService {
                     amountOfPaid INTEGER NOT NULL, 
                     startDate INTEGER NOT NULL,
                     endDate INTEGER NOT NULL
-                    )`);
+                    )`).then(()=>{
+                        this.storage.query('CREATE UNIQUE INDEX IF NOT EXISTS PAIDRECORD_STARTDATE_UNIDX ON PaidRecord(user_id, startDate)');
+                    });
+
     }
 
     getUserByPhoneNum(phoneNum: String) {
@@ -124,7 +127,6 @@ export class UserService {
 
     getPaidRecordsOfUser(user:User){
         let sql = `SELECT id, amountOfPaid, startDate, endDate FROM PaidRecord WHERE user_id=? ORDER BY endDate DESC`;
-        console.debug("get paid record list from user: " + user.id);
         return this.storage.query(sql, [user.id]).then((data) => {
             let paidRecords:Array<PaidRecord> = [];
             for(let item of data.res.rows){
