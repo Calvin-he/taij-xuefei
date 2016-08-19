@@ -13,17 +13,14 @@
 
 <ion-content padding class="settings">
   <ion-list>
-    <button ion-item>
-      备份数据到文件
-    </button>
-
     <ion-item>
-      <button>从文件中导入数据</button>
+      <button large (click)="exportData()">备份数据到文件</button>
     </ion-item>
     <ion-item>
-      <button>设置登录密码（尚未实现）</button>
+      <button large (click)="importData()">从文件中恢复数据</button>
+    </ion-item>
+    <ion-item>
+      <button large >设置登录密码（尚未实现）</button>
     </ion-item>
   </ion-list>
-
-
 </ion-content>

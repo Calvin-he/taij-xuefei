@@ -36,14 +36,7 @@ export class UserService {
         let sql = "SELECT id, username, phoneNum, createDate FROM User where phoneNum=?";
         return this.storage.query(sql, [phoneNum]).then((data) => {
             let len = data.res.rows.length;
-            let user: User;
-            if (len == 1) {
-                let res = data.res.rows[0];
-                user = new User(res.username, res.phoneNum, res.id);
-                user.createDate = this.parseDateTime(res.createDate);
-            } else {
-                user == null;
-            }
+            let user:User = (len==1)?this.row2User(data.res.rows[0]):null;
             return user;
         });
     }
@@ -52,14 +45,7 @@ export class UserService {
         let sql = "SELECT id, username, phoneNum, createDate FROM User where username=?";
         return this.storage.query(sql, [username]).then((data) => {
             let len = data.res.rows.length;
-            let user: User;
-            if (len == 1) {
-                let res = data.res.rows[0];
-                user = new User(res.username, res.phoneNum, res.id);
-                user.createDate = this.parseDateTime(res.createDate);
-            } else {
-                user == null;
-            }
+            let user:User = (len==1)?this.row2User(data.res.rows[0]):null;
             return user;
         });
     }
@@ -86,10 +72,9 @@ export class UserService {
         return this.storage.query(sql).then((data) => {
             let users:Array<User> = [];
             for(let item of data.res.rows){
-                let user = new User(item.username, item.phoneNum, item.id);
-                user.createDate = this.parseDateTime(item.createDate);
-                let now = this.formatDate(new Date());
+                let user = this.row2User(item);
                 if(checkExpired){
+                    let now = this.formatDate(new Date());
                     this.storage.query("SELECT id FROM PaidRecord WHERE user_id=? AND endDate>?", [user.id, now]).then((data) => {
                         user.isExpired = (data.res.rows.length == 0);
                     })
@@ -123,34 +108,30 @@ export class UserService {
     }
 
     listUnexpiredPaidRecord(){
-        let sql = `SELECT p.id as pid, amountOfPaid, startDate, endDate, user_id, username, phoneNum, createDate  
+        let sql = `SELECT p.id as id, amountOfPaid, startDate, endDate, user_id, username, phoneNum, createDate  
             FROM PaidRecord p JOIN User u ON p.user_id=u.id WHERE p.endDate>? ORDER BY startDate DESC`;
         return this.storage.query(sql, [this.formatDate(new Date())]).then((data) => {
             let paidRecords:Array<PaidRecord> = [];
             for(let item of data.res.rows){
-                let user = new User(item.username, item.phoneNum, item.user_id);
-                user.createDate = this.parseDateTime(item.createDate);
+                let user = this.row2User(item);
                 user.isExpired = false;
-                let startDate = this.parseDate(item.startDate);
-                let endDate = this.parseDate(item.endDate);
-                let paidRecord = new PaidRecord(user, item.amountOfPaid, startDate, endDate, item.pid);
+                let paidRecord = this.row2PaidRecord(item, user);
                 paidRecords.push(paidRecord);
             };
             return paidRecords;
         });
     }
 
-    getPaidRecordsOfUser(user){
-        let sql = `SELECT id, amountOfPaid, startDate, endDate FROM PaidRecord WHERE user_id=? ORDER BY startDate DESC`;
+    getPaidRecordsOfUser(user:User){
+        let sql = `SELECT id, amountOfPaid, startDate, endDate FROM PaidRecord WHERE user_id=? ORDER BY endDate DESC`;
         console.debug("get paid record list from user: " + user.id);
         return this.storage.query(sql, [user.id]).then((data) => {
             let paidRecords:Array<PaidRecord> = [];
             for(let item of data.res.rows){
-                let startDate = this.parseDate(item.startDate);
-                let endDate = this.parseDate(item.endDate);
-                let paidRecord = new PaidRecord(user, item.amountOfPaid, startDate, endDate, item.id);
+                let paidRecord = this.row2PaidRecord(item, user);
                 paidRecords.push(paidRecord);
             };
+            user.paidRecords = paidRecords;
             return paidRecords;
         });
     }
@@ -163,6 +144,26 @@ export class UserService {
 
     deletePaidRecord(paidRecordId: number) {
         return this.storage.query("DELETE FROM PaidRecord WHERE id=?", [paidRecordId]);
+    }
+
+    /**
+     * handle each user in user list
+     * handler(user)
+     */
+    handleEachUser(handler){
+        return this.storage.query("SELECT * FROM User").then((data)=>{
+            for(let row of data.res.rows){
+                let user = this.row2User(row);
+                this.storage.query('SELECT * FROM PaidRecord WHERE user_id=? ORDER BY endDate DESC', [user.id]).then((pdata)=>{
+                    let paidRecords: PaidRecord[] = [];
+                    for(let prow of pdata.res.rows){
+                        paidRecords.push(this.row2PaidRecord(prow, user));
+                    }
+                    user.paidRecords = paidRecords;
+                    handler(user);
+                });
+            }
+        });
     }
 
     private formatDate(d:Date){
@@ -179,5 +180,18 @@ export class UserService {
 
     private parseDateTime(dt:string){
         return moment(dt, 'YYYYMMDDHHmmss').toDate();
+    }
+
+    private row2User(row){
+        let user = new User(row.username, row.phoneNum,row.user_id||row.id);
+        user.createDate = this.parseDateTime(row.createDate);
+        return user;
+    }
+
+    private row2PaidRecord(row, user:User){
+        let startDate = this.parseDate(row.startDate);
+        let endDate = this.parseDate(row.endDate);
+        let paidRecord = new PaidRecord(user, row.amountOfPaid, startDate, endDate, row.id);
+        return paidRecord;
     }
 }

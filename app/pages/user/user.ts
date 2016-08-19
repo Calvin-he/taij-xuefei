@@ -33,9 +33,7 @@ export class UserPage {
     }
 
     ionViewWillEnter() {
-        this.userService.getPaidRecordsOfUser(this.user).then((paidRecords) => {
-            this.user.paidRecordList = paidRecords;
-        });
+        this.userService.getPaidRecordsOfUser(this.user);
     }
 
     onCreateUser() {

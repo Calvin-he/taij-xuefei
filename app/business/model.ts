@@ -2,7 +2,7 @@
 import * as moment from 'moment';
 
 export class User {
-    public paidRecordList:Array<PaidRecord>;
+    public paidRecords:Array<PaidRecord>;
     public createDate:Date;
     public isExpired;
 
@@ -14,9 +14,7 @@ export class User {
 }
 
 export class PaidRecord {
-    public periodUnit = 'month';
-
-    
+   
     constructor(public user:User, public amountOfPaid:number, public startDate:Date, public endDate:Date, public id?:number){
     }
      
