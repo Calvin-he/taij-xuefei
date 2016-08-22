@@ -23,8 +23,8 @@ export class PaidRecord {
     }
 
     get remainingDays():Number {
-        let mdate = moment(this.endDate).startOf('date'),
-        now = moment().startOf('date');
+        let mdate = moment(this.endDate).startOf('day'),
+        now = moment().startOf('day');
         return (mdate.unix() - now.unix()) / (24 * 3600);
     }
 

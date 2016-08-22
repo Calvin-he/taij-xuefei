@@ -8,8 +8,8 @@ export class DateShowDirective {
     constructor(private el: ElementRef) {
     }
     @Input() set dateShow(date:Date){
-        let mdate = moment(date).startOf('date'),
-            now = moment().startOf('date');
+        let mdate = moment(date).startOf('day'),
+            now = moment().startOf('day');
         let diffDays = (mdate.unix() - now.unix())/(24*3600);
         let dateStr:string;
         if(diffDays == 0) {
