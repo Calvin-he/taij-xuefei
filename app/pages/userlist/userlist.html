@@ -15,13 +15,14 @@
 
 
 <ion-content>
+    <ion-searchbar (ionInput)="getSearchedItems($event)" cancelButtonText="取消"></ion-searchbar>
     <ion-grid>
         <ion-row class="table-head">
             <ion-col width-35 class="clickable">姓名</ion-col>
             <ion-col width-45 class="clickable">电话</ion-col>
             <ion-col width-20 class="clickable">状态</ion-col>
         </ion-row>
-        <ion-row *ngFor="let item of items" data-user-id="{{item.id}}" (click)="popoverUserOperations(item)" class="table-row clickable">
+        <ion-row *ngFor="let item of viewItems" data-user-id="{{item.id}}" (click)="popoverUserOperations(item)" class="table-row clickable">
             <ion-col width-35 (click)="showUserPage($event, item)" class="clickable username">{{item.username}}</ion-col>
             <ion-col width-45>{{item.phoneNum}}</ion-col>
             <ion-col width-20>

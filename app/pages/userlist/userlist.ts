@@ -11,7 +11,9 @@ import { Contacts } from 'ionic-native';
     templateUrl: 'build/pages/userlist/userlist.html'
 })
 export class UserListPage {
+    private queryString:string;
     private items: Array<User>;
+    private viewItems: Array<User>;
 
     constructor(private nav: NavController, navParams: NavParams, private userService: UserService, private events: Events) {
     }
@@ -30,15 +32,32 @@ export class UserListPage {
     private listUsers() {
         return this.userService.listAllUser().then((users) => {
             this.items = users;
+            if(this.queryString){
+                this.viewItems = this.items.filter((user)=>{
+                    return (user.username.indexOf(this.queryString)>=0 || user.phoneNum.indexOf(this.queryString)>=0);
+                });
+            }else{
+                this.viewItems = this.items;
+            }
         });
     }
 
-    // popoverOperations($event){
-    //     let popover = Popover.create(UserListOperationPopover, {parentPage:this});
-    //     this.nav.present(popover, {
-    //         ev:$event
-    //     });
-    // }
+
+    getSearchedItems($event) {
+        let val:string = $event.value;
+        this.queryString = val.trim();
+        if(this.queryString){
+            this.viewItems = this.items.filter((user)=>{
+                    return (user.username.indexOf(this.queryString)>=0 || user.phoneNum.indexOf(this.queryString)>=0);
+                });
+        }else{
+            this.viewItems = this.items;
+        }
+    }
+    
+    sortByStatus($event) {
+        
+    }
 
     popoverUserOperations(user: User) {
         let actionSheet = ActionSheet.create({
